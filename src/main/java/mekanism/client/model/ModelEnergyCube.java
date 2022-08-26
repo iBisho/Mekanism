@@ -281,11 +281,11 @@ public class ModelEnergyCube extends MekanismJavaModel {
             for (RelativeSide side : EnumUtils.SIDES) {
                 ISlotInfo slotInfo = config.getSlotInfo(side);
                 if (slotInfo != null) {
-                    if (slotInfo.canInput()) {
-                        enabledSides.add(side);
-                    } else if (slotInfo.canOutput()) {
+                    if (slotInfo.canOutput()) {
                         enabledSides.add(side);
                         outputSides.add(side);
+                    } else if (slotInfo.canInput()) {
+                        enabledSides.add(side);
                     }
                 }
             }
@@ -305,17 +305,17 @@ public class ModelEnergyCube extends MekanismJavaModel {
             //TODO: Maybe improve on this, but for now this is a decent way of making it not have disabled sides show
             for (RelativeSide side : EnumUtils.SIDES) {
                 DataType dataType = DataType.byIndexStatic(sideConfig.getInt(NBTConstants.SIDE + side.ordinal()));
-                if (dataType == DataType.INPUT) {
-                    enabledSides.add(side);
-                } else if (dataType == DataType.OUTPUT) {
+                if (dataType.canOutput()) {
                     enabledSides.add(side);
                     outputSides.add(side);
+                } else if (dataType == DataType.INPUT) {
+                    enabledSides.add(side);
                 }
             }
         } else {
             enabledSides = EnumSet.allOf(RelativeSide.class);
             if (tier == EnergyCubeTier.CREATIVE) {
-                outputSides = EnumSet.allOf(RelativeSide.class);
+                outputSides = enabledSides;
             } else {
                 outputSides = Collections.singleton(RelativeSide.FRONT);
             }
@@ -373,7 +373,7 @@ public class ModelEnergyCube extends MekanismJavaModel {
         }
 
         public static final RenderType BATCHED_RENDER_TYPE = MekanismRenderType.standardTranslucentTarget(CORE_TEXTURE);
-        private final RenderType RENDER_TYPE = renderType(CORE_TEXTURE);
+        public final RenderType RENDER_TYPE = renderType(CORE_TEXTURE);
         private final ModelPart cube;
 
         public ModelEnergyCore(EntityModelSet entityModelSet) {
@@ -382,12 +382,8 @@ public class ModelEnergyCube extends MekanismJavaModel {
             cube = CUBE.getFromRoot(root);
         }
 
-        public VertexConsumer getBuffer(@NotNull MultiBufferSource renderer) {
-            return renderer.getBuffer(RENDER_TYPE);
-        }
-
         public void render(@NotNull PoseStack matrix, @NotNull MultiBufferSource renderer, int light, int overlayLight, EnumColor color, float energyPercentage) {
-            render(matrix, getBuffer(renderer), light, overlayLight, color, energyPercentage);
+            render(matrix, renderer.getBuffer(RENDER_TYPE), light, overlayLight, color, energyPercentage);
         }
 
         public void render(@NotNull PoseStack matrix, @NotNull VertexConsumer buffer, int light, int overlayLight, EnumColor color, float energyPercentage) {
