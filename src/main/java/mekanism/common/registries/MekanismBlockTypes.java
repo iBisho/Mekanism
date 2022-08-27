@@ -449,7 +449,7 @@ public class MekanismBlockTypes {
           .createBlock(() -> MekanismTileEntityTypes.QUANTUM_ENTANGLOPORTER, MekanismLang.DESCRIPTION_QUANTUM_ENTANGLOPORTER)
           .withGui(() -> MekanismContainerTypes.QUANTUM_ENTANGLOPORTER)
           .withSupportedUpgrades(EnumSet.of(Upgrade.ANCHOR))
-          .with(new AttributeStateFacing(BlockStateProperties.FACING), Attributes.INVENTORY, Attributes.SECURITY)
+          .with(new AttributeStateFacing(BlockStateProperties.FACING), Attributes.INVENTORY, Attributes.SECURITY, Attributes.REDSTONE)
           .withCustomShape(BlockShapes.QUANTUM_ENTANGLOPORTER)
           .withComputerSupport("quantumEntangloporter")
           .build();
@@ -720,7 +720,7 @@ public class MekanismBlockTypes {
           .withGui(() -> MekanismContainerTypes.SPS, MekanismLang.SPS)
           .withSound(MekanismSounds.SPS)
           .withEnergyConfig(MekanismConfig.storage.spsPort)
-          .with(Attributes.ACTIVE)
+          .with(Attributes.ACTIVE, Attributes.COMPARATOR)
           .externalMultiblock()
           .withComputerSupport("spsPort")
           .build();
