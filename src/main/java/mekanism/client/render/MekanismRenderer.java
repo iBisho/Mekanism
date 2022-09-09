@@ -14,7 +14,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import mekanism.api.MekanismAPI;
@@ -27,6 +26,7 @@ import mekanism.client.gui.element.GuiElementHolder;
 import mekanism.client.model.baked.DigitalMinerBakedModel;
 import mekanism.client.render.RenderResizableCuboid.FaceDisplay;
 import mekanism.client.render.data.FluidRenderData;
+import mekanism.client.render.data.ValveRenderData;
 import mekanism.client.render.lib.ColorAtlas;
 import mekanism.client.render.lib.ColorAtlas.ColorRegistryObject;
 import mekanism.client.render.tileentity.RenderDigitalMiner;
@@ -44,6 +44,7 @@ import mekanism.common.lib.multiblock.IValveHandler.ValveData;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.util.EnumUtils;
 import mekanism.common.util.MekanismUtils;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -51,7 +52,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -114,34 +117,45 @@ public class MekanismRenderer {
     }
 
     public static void renderObject(@Nullable Model3D object, @NotNull PoseStack matrix, VertexConsumer buffer, int argb, int light, int overlay,
-          FaceDisplay faceDisplay) {
-        renderObject(object, matrix, buffer, argb, light, overlay, faceDisplay, true);
+          FaceDisplay faceDisplay, Camera camera, BlockPos renderPos) {
+        if (object != null) {
+            renderObject(object, matrix, buffer, argb, light, overlay, faceDisplay, camera, Vec3.atLowerCornerOf(renderPos));
+        }
     }
 
     public static void renderObject(@Nullable Model3D object, @NotNull PoseStack matrix, VertexConsumer buffer, int argb, int light, int overlay,
-          FaceDisplay faceDisplay, boolean fakeDisableDiffuse) {
+          FaceDisplay faceDisplay, Camera camera) {
+        renderObject(object, matrix, buffer, argb, light, overlay, faceDisplay, camera, (Vec3) null);
+    }
+
+    public static void renderObject(@Nullable Model3D object, @NotNull PoseStack matrix, VertexConsumer buffer, int argb, int light, int overlay,
+          FaceDisplay faceDisplay, Camera camera, @Nullable Vec3 renderPos) {
         if (object != null) {
-            RenderResizableCuboid.renderCube(object, matrix, buffer, argb, light, overlay, faceDisplay, fakeDisableDiffuse);
+            RenderResizableCuboid.renderCube(object, matrix, buffer, argb, light, overlay, faceDisplay, camera, renderPos);
         }
     }
 
     public static void renderObject(@Nullable Model3D object, @NotNull PoseStack matrix, VertexConsumer buffer, int[] colors, int light, int overlay,
-          FaceDisplay faceDisplay) {
+          FaceDisplay faceDisplay, Camera camera) {
+        renderObject(object, matrix, buffer, colors, light, overlay, faceDisplay, camera, null);
+    }
+
+    public static void renderObject(@Nullable Model3D object, @NotNull PoseStack matrix, VertexConsumer buffer, int[] colors, int light, int overlay,
+          FaceDisplay faceDisplay, Camera camera, @Nullable Vec3 renderPos) {
         if (object != null) {
-            RenderResizableCuboid.renderCube(object, matrix, buffer, colors, light, overlay, faceDisplay, true);
+            RenderResizableCuboid.renderCube(object, matrix, buffer, colors, light, overlay, faceDisplay, camera, renderPos);
         }
     }
 
-    public static void renderValves(PoseStack matrix, VertexConsumer buffer, Set<ValveData> valves, FluidRenderData data, BlockPos pos, int glow, int overlay,
-          BooleanSupplier inMultiblock) {
-        if (!valves.isEmpty()) {
-            //If we are in the multiblock, render both faces of the valves as we may be "inside" of them or inside and outside them
-            // if we aren't in the multiblock though we can just get away with only rendering the front faces
-            FaceDisplay faceDisplay = inMultiblock.getAsBoolean() ? FaceDisplay.BOTH : FaceDisplay.FRONT;
-            for (ValveData valveData : valves) {
+    public static void renderValves(PoseStack matrix, VertexConsumer buffer, Set<ValveData> valves, FluidRenderData data, float fluidHeight, BlockPos pos, int glow,
+          int overlay, FaceDisplay faceDisplay, Camera camera) {
+        for (ValveData valveData : valves) {
+            ValveRenderData valveRenderData = ValveRenderData.get(data, valveData);
+            Model3D valveModel = ModelRenderer.getValveModel(valveRenderData, fluidHeight);
+            if (valveModel != null) {
                 matrix.pushPose();
                 matrix.translate(valveData.location.getX() - pos.getX(), valveData.location.getY() - pos.getY(), valveData.location.getZ() - pos.getZ());
-                renderObject(ModelRenderer.getValveModel(data, valveData), matrix, buffer, data.getColorARGB(), glow, overlay, faceDisplay);
+                renderObject(valveModel, matrix, buffer, valveRenderData.getColorARGB(), glow, overlay, faceDisplay, camera, valveData.location);
                 matrix.popPose();
             }
         }
@@ -153,19 +167,19 @@ public class MekanismRenderer {
     }
 
     public static float getRed(int color) {
-        return (color >> 16 & 0xFF) / 255.0F;
+        return FastColor.ARGB32.red(color) / 255.0F;
     }
 
     public static float getGreen(int color) {
-        return (color >> 8 & 0xFF) / 255.0F;
+        return FastColor.ARGB32.green(color) / 255.0F;
     }
 
     public static float getBlue(int color) {
-        return (color & 0xFF) / 255.0F;
+        return FastColor.ARGB32.blue(color) / 255.0F;
     }
 
     public static float getAlpha(int color) {
-        return (color >> 24 & 0xFF) / 255.0F;
+        return FastColor.ARGB32.alpha(color) / 255.0F;
     }
 
     public static void color(int color) {
@@ -228,7 +242,7 @@ public class MekanismRenderer {
         int color = getColorARGB(fluidStack);
         if (MekanismUtils.lighterThanAirGas(fluidStack)) {
             //TODO: We probably want to factor in the fluid's alpha value somehow
-            return getColorARGB(getRed(color), getGreen(color), getBlue(color), Math.min(1, fluidScale + 0.2F));
+            return getColorARGB(FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color), Math.min(1, fluidScale + 0.2F));
         }
         return color;
     }
@@ -242,7 +256,7 @@ public class MekanismRenderer {
             return -1;
         }
         int color = chemical.getTint();
-        return getColorARGB(getRed(color), getGreen(color), getBlue(color), gaseous ? Math.min(1, scale + 0.2F) : 1);
+        return getColorARGB(FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color), gaseous ? Math.min(1, scale + 0.2F) : 1);
     }
 
     public static int getColorARGB(float red, float green, float blue, float alpha) {
@@ -255,11 +269,7 @@ public class MekanismRenderer {
         } else if (alpha > 1) {
             alpha = 1;
         }
-        int argb = (int) (255 * alpha) << 24;
-        argb |= red << 16;
-        argb |= green << 8;
-        argb |= blue;
-        return argb;
+        return FastColor.ARGB32.color((int) (255 * alpha), red, green, blue);
     }
 
     public static int calculateGlowLight(int combinedLight, @NotNull FluidStack fluid) {
@@ -272,10 +282,10 @@ public class MekanismRenderer {
     }
 
     public static void renderColorOverlay(PoseStack matrix, int x, int y, int width, int height, int color) {
-        float r = getRed(color);
-        float g = getGreen(color);
-        float b = getBlue(color);
-        float a = getAlpha(color);
+        int r = FastColor.ARGB32.red(color);
+        int g = FastColor.ARGB32.green(color);
+        int b = FastColor.ARGB32.blue(color);
+        int a = FastColor.ARGB32.alpha(color);
         RenderSystem.disableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
@@ -491,7 +501,7 @@ public class MekanismRenderer {
             return setTextures(still, still, flowing, flowing, flowing, flowing);
         }
 
-        public Model3D setTexture(Direction side, SpriteInfo spriteInfo) {
+        public Model3D setTexture(Direction side, @Nullable SpriteInfo spriteInfo) {
             textures[side.ordinal()] = spriteInfo;
             return this;
         }
@@ -516,6 +526,14 @@ public class MekanismRenderer {
         }
 
         public record SpriteInfo(TextureAtlasSprite sprite, int size) {
+
+            public float getU(float u) {
+                return sprite.getU(u * size);
+            }
+
+            public float getV(float v) {
+                return sprite.getV(v * size);
+            }
         }
 
         public interface ModelBoundsSetter {
