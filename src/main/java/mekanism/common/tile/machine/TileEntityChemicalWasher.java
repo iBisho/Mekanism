@@ -198,7 +198,7 @@ public class TileEntityChemicalWasher extends TileEntityRecipeMachine<FluidSlurr
     public void recalculateUpgrades(Upgrade upgrade) {
         super.recalculateUpgrades(upgrade);
         if (upgrade == Upgrade.SPEED) {
-            baselineMaxOperations = (int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED));
+            baselineMaxOperations = (int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED) + 1);
         }
     }
 
