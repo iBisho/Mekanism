@@ -57,7 +57,7 @@ public class UpgradeUtils {
     public static List<Component> getExpScaledInfo(IUpgradeTile tile, Upgrade upgrade) {
         List<Component> ret = new ArrayList<>();
         if (tile.supportsUpgrades() && upgrade.getMax() > 1) {
-            ret.add(MekanismLang.UPGRADES_EFFECT.translate(Math.pow(2, (float) tile.getComponent().getUpgrades(upgrade))));
+            ret.add(MekanismLang.UPGRADES_EFFECT.translate(Math.pow(2.4, (float) tile.getComponent().getUpgrades(upgrade))));
         }
         return ret;
     }
