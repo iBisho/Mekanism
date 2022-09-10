@@ -274,7 +274,7 @@ public class TileEntityRotaryCondensentrator extends TileEntityRecipeMachine<Rot
     public void recalculateUpgrades(Upgrade upgrade) {
         super.recalculateUpgrades(upgrade);
         if (upgrade == Upgrade.SPEED) {
-            baselineMaxOperations = (int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED) + 1);
+            baselineMaxOperations = (int) Math.pow(2.4, upgradeComponent.getUpgrades(Upgrade.SPEED));
         }
     }
 
