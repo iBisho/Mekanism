@@ -75,7 +75,7 @@ public class TileEntityElectricPump extends TileEntityMekanism implements IConfi
      * How many ticks it takes to run an operation.
      */
     private static final int BASE_TICKS_REQUIRED = 19;
-    public static final int HEAVY_WATER_AMOUNT = FluidType.BUCKET_VOLUME / 100;
+    public static final int HEAVY_WATER_AMOUNT = 7500 / 100;
     /**
      * This pump's tank
      */
@@ -161,7 +161,7 @@ public class TileEntityElectricPump extends TileEntityMekanism implements IConfi
     }
 
     public int estimateIncrementAmount() {
-        return fluidTank.getFluid().getFluid() == MekanismFluids.HEAVY_WATER.getFluid() ? HEAVY_WATER_AMOUNT : FluidType.BUCKET_VOLUME;
+        return fluidTank.getFluid().getFluid() == MekanismFluids.HEAVY_WATER.getFluid() ? HEAVY_WATER_AMOUNT : 7500;
     }
 
     private boolean suck() {
@@ -248,7 +248,7 @@ public class TileEntityElectricPump extends TileEntityMekanism implements IConfi
         if (hasFilter && sourceFluid == Fluids.WATER) {
             return MekanismFluids.HEAVY_WATER.getFluidStack(HEAVY_WATER_AMOUNT);
         }
-        return new FluidStack(sourceFluid, FluidType.BUCKET_VOLUME);
+        return new FluidStack(sourceFluid, 7500);
     }
 
     private void suck(@NotNull FluidStack fluidStack, BlockPos pos, boolean addRecurring) {
