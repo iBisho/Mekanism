@@ -75,7 +75,7 @@ public class TileEntityPressurizedReactionChamber extends TileEntityProgressMach
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
     private static final int BASE_DURATION = 100;
-    private static final long MAX_GAS = 10_000;
+    private static final long MAX_GAS = 60_000;
 
     @WrappingComputerMethod(wrapper = ComputerFluidTankWrapper.class, methodNames = {"getInputFluid", "getInputFluidCapacity", "getInputFluidNeeded",
                                                                                      "getInputFluidFilledPercentage"})
