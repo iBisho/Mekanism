@@ -94,7 +94,7 @@ public class TileEntityQIOFilterHandler extends TileEntityQIOComponent implement
 
     protected int getMaxTransitCount() {
         // 64 to 448 items
-        return 64 + Math.round(32 * upgradeComponent.getUpgrades(Upgrade.SPEED) * 1.5);
+        return 64 + (int) Math.round(32 * upgradeComponent.getUpgrades(Upgrade.SPEED) * 1.5);
     }
 
     protected int getMaxTransitTypes() {
