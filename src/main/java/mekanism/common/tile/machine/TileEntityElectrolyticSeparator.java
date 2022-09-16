@@ -241,7 +241,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityRecipeMachine<Ele
     private void handleTank(IGasTank tank, GasMode mode) {
         if (!tank.isEmpty()) {
             if (mode == GasMode.DUMPING) {
-                tank.shrinkStack(8 * (long) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED)), Action.EXECUTE);
+                tank.shrinkStack(8 * (long) (Math.round(Math.pow(2.6, upgradeComponent.getUpgrades(Upgrade.SPEED)))), Action.EXECUTE);
             } else if (mode == GasMode.DUMPING_EXCESS) {
                 long target = getDumpingExcessTarget(tank);
                 long stored = tank.getStored();
@@ -309,7 +309,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityRecipeMachine<Ele
     public void recalculateUpgrades(Upgrade upgrade) {
         super.recalculateUpgrades(upgrade);
         if (upgrade == Upgrade.SPEED) {
-            baselineMaxOperations = (int) Math.pow(2.4, upgradeComponent.getUpgrades(Upgrade.SPEED));
+            baselineMaxOperations = (int) Math.round(Math.pow(2.4, upgradeComponent.getUpgrades(Upgrade.SPEED)));
         }
     }
 
