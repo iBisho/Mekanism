@@ -350,7 +350,7 @@ public final class MekanismUtils {
             Map<Upgrade, Integer> upgrades = Upgrade.buildMap(ItemDataUtils.getCompound(stack, NBTConstants.COMPONENT_UPGRADE));
             numUpgrades = upgrades.getOrDefault(Upgrade.ENERGY, 0);
         }
-        return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 2.5 * (numUpgrades / Upgrade.ENERGY.getMax())));
+        return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 1.2 * (numUpgrades / Upgrade.ENERGY.getMax())));
     }
 
     /**
