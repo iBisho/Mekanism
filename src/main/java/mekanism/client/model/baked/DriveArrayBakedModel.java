@@ -8,10 +8,10 @@ import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.client.model.MekanismModelCache;
 import mekanism.client.render.lib.Quad;
 import mekanism.client.render.lib.QuadTransformation;
-import mekanism.client.render.lib.QuadUtils;
 import mekanism.common.block.attribute.Attribute;
 import mekanism.common.tile.qio.TileEntityQIODriveArray;
 import mekanism.common.tile.qio.TileEntityQIODriveArray.DriveStatus;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
@@ -35,24 +35,31 @@ public class DriveArrayBakedModel extends ExtensionBakedModel<byte[]> {
     public List<BakedQuad> createQuads(QuadsKey<byte[]> key) {
         byte[] driveStatus = Objects.requireNonNull(key.getData());
         BlockState blockState = Objects.requireNonNull(key.getBlockState());
+        RenderType renderType = key.getLayer();
+        QuadTransformation rotation = QuadTransformation.rotate(Attribute.getFacing(blockState));
         //Side will always be null as we validate it when creating the key as we don't currently have any of the sides get culled
         Direction side = key.getSide();
-        List<Quad> driveQuads = new ArrayList<>();
+        List<BakedQuad> driveQuads = new ArrayList<>();
         for (int i = 0; i < driveStatus.length; i++) {
             DriveStatus status = DriveStatus.STATUSES[driveStatus[i]];
             if (status != DriveStatus.NONE) {
                 float[] translation = DRIVE_PLACEMENTS[i];
                 QuadTransformation transformation = QuadTransformation.translate(translation[0], translation[1], 0);
-                for (BakedQuad bakedQuad : MekanismModelCache.INSTANCE.QIO_DRIVES[status.ordinal()].getBakedModel().getQuads(blockState, side, key.getRandom())) {
+                for (BakedQuad bakedQuad : MekanismModelCache.INSTANCE.QIO_DRIVES[status.ordinal()].getQuads(blockState, side, key.getRandom(), ModelData.EMPTY, renderType)) {
                     Quad quad = new Quad(bakedQuad);
-                    transformation.transform(quad);
-                    driveQuads.add(quad);
+                    if (quad.transform(transformation, rotation)) {
+                        //Bake and add the quad if we transformed it
+                        driveQuads.add(quad.bake());
+                    } else {
+                        // otherwise, just add the source quad
+                        driveQuads.add(bakedQuad);
+                    }
                 }
             }
         }
         if (!driveQuads.isEmpty()) {
             List<BakedQuad> ret = new ArrayList<>(key.getQuads());
-            ret.addAll(QuadUtils.transformAndBake(driveQuads, QuadTransformation.rotate(Attribute.getFacing(blockState))));
+            ret.addAll(driveQuads);
             return ret;
         }
         return key.getQuads();

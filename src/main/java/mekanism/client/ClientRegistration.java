@@ -82,24 +82,20 @@ import mekanism.client.model.MekanismModelCache;
 import mekanism.client.model.ModelArmoredFreeRunners;
 import mekanism.client.model.ModelArmoredJetpack;
 import mekanism.client.model.ModelAtomicDisassembler;
-import mekanism.client.model.ModelChemicalDissolutionChamber;
-import mekanism.client.model.ModelEnergyCube;
-import mekanism.client.model.ModelEnergyCube.ModelEnergyCore;
+import mekanism.client.model.ModelEnergyCore;
 import mekanism.client.model.ModelFlamethrower;
-import mekanism.client.model.ModelFluidTank;
 import mekanism.client.model.ModelFreeRunners;
 import mekanism.client.model.ModelIndustrialAlarm;
 import mekanism.client.model.ModelJetpack;
 import mekanism.client.model.ModelQuantumEntangloporter;
 import mekanism.client.model.ModelScubaMask;
 import mekanism.client.model.ModelScubaTank;
-import mekanism.client.model.ModelSeismicVibrator;
-import mekanism.client.model.ModelSolarNeutronActivator;
 import mekanism.client.model.ModelTransporterBox;
 import mekanism.client.model.baked.DigitalMinerBakedModel;
 import mekanism.client.model.baked.DriveArrayBakedModel;
 import mekanism.client.model.baked.ExtensionBakedModel.LightedBakedModel;
 import mekanism.client.model.baked.QIORedstoneAdapterBakedModel;
+import mekanism.client.model.energycube.EnergyCubeModelLoader;
 import mekanism.client.model.robit.RobitModel;
 import mekanism.client.particle.JetpackFlameParticle;
 import mekanism.client.particle.JetpackSmokeParticle;
@@ -117,12 +113,8 @@ import mekanism.client.render.entity.RenderRobit;
 import mekanism.client.render.hud.MekaSuitEnergyLevel;
 import mekanism.client.render.hud.MekaSuitHUD;
 import mekanism.client.render.item.MekaSuitBarDecorator;
-import mekanism.client.render.item.block.RenderChemicalDissolutionChamberItem;
 import mekanism.client.render.item.block.RenderEnergyCubeItem;
-import mekanism.client.render.item.block.RenderFluidTankItem;
 import mekanism.client.render.item.block.RenderQuantumEntangloporterItem;
-import mekanism.client.render.item.block.RenderSeismicVibratorItem;
-import mekanism.client.render.item.block.RenderSolarNeutronActivatorItem;
 import mekanism.client.render.item.gear.RenderAtomicDisassembler;
 import mekanism.client.render.item.gear.RenderFlameThrower;
 import mekanism.client.render.item.gear.RenderFreeRunners;
@@ -133,7 +125,6 @@ import mekanism.client.render.layer.MekanismArmorLayer;
 import mekanism.client.render.layer.MekanismElytraLayer;
 import mekanism.client.render.obj.TransmitterLoader;
 import mekanism.client.render.tileentity.RenderBin;
-import mekanism.client.render.tileentity.RenderChemicalDissolutionChamber;
 import mekanism.client.render.tileentity.RenderDigitalMiner;
 import mekanism.client.render.tileentity.RenderDimensionalStabilizer;
 import mekanism.client.render.tileentity.RenderDynamicTank;
@@ -146,7 +137,6 @@ import mekanism.client.render.tileentity.RenderPigmentMixer;
 import mekanism.client.render.tileentity.RenderQuantumEntangloporter;
 import mekanism.client.render.tileentity.RenderSPS;
 import mekanism.client.render.tileentity.RenderSeismicVibrator;
-import mekanism.client.render.tileentity.RenderSolarNeutronActivator;
 import mekanism.client.render.tileentity.RenderTeleporter;
 import mekanism.client.render.tileentity.RenderThermalEvaporationPlant;
 import mekanism.client.render.tileentity.RenderThermoelectricBoiler;
@@ -158,11 +148,13 @@ import mekanism.client.render.transmitter.RenderUniversalCable;
 import mekanism.client.sound.SoundHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.base.HolidayManager;
+import mekanism.common.block.attribute.Attribute;
 import mekanism.common.content.gear.shared.ModuleColorModulationUnit;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.ItemConfigurationCard;
 import mekanism.common.item.ItemCraftingFormula;
 import mekanism.common.item.block.ItemBlockCardboardBox;
+import mekanism.common.item.block.ItemBlockEnergyCube;
 import mekanism.common.lib.Color;
 import mekanism.common.lib.FieldReflectionHelper;
 import mekanism.common.lib.radiation.RadiationManager;
@@ -180,6 +172,7 @@ import mekanism.common.registries.MekanismTileEntityTypes;
 import mekanism.common.resource.IResource;
 import mekanism.common.resource.PrimaryResource;
 import mekanism.common.resource.ResourceType;
+import mekanism.common.tier.EnergyCubeTier;
 import mekanism.common.tile.qio.TileEntityQIOComponent;
 import mekanism.common.tile.transmitter.TileEntityLogisticalTransporter;
 import mekanism.common.util.RegistryUtils;
@@ -313,7 +306,6 @@ public class ClientRegistration {
 
         //Register TileEntityRenderers
         ClientRegistrationUtil.bindTileEntityRenderer(event, RenderThermoelectricBoiler::new, MekanismTileEntityTypes.BOILER_CASING, MekanismTileEntityTypes.BOILER_VALVE);
-        event.registerBlockEntityRenderer(MekanismTileEntityTypes.CHEMICAL_DISSOLUTION_CHAMBER.get(), RenderChemicalDissolutionChamber::new);
         ClientRegistrationUtil.bindTileEntityRenderer(event, RenderDynamicTank::new, MekanismTileEntityTypes.DYNAMIC_TANK, MekanismTileEntityTypes.DYNAMIC_VALVE);
         event.registerBlockEntityRenderer(MekanismTileEntityTypes.DIGITAL_MINER.get(), RenderDigitalMiner::new);
         event.registerBlockEntityRenderer(MekanismTileEntityTypes.DIMENSIONAL_STABILIZER.get(), RenderDimensionalStabilizer::new);
@@ -322,7 +314,6 @@ public class ClientRegistration {
         event.registerBlockEntityRenderer(MekanismTileEntityTypes.PIGMENT_MIXER.get(), RenderPigmentMixer::new);
         event.registerBlockEntityRenderer(MekanismTileEntityTypes.QUANTUM_ENTANGLOPORTER.get(), RenderQuantumEntangloporter::new);
         event.registerBlockEntityRenderer(MekanismTileEntityTypes.SEISMIC_VIBRATOR.get(), RenderSeismicVibrator::new);
-        event.registerBlockEntityRenderer(MekanismTileEntityTypes.SOLAR_NEUTRON_ACTIVATOR.get(), RenderSolarNeutronActivator::new);
         event.registerBlockEntityRenderer(MekanismTileEntityTypes.TELEPORTER.get(), RenderTeleporter::new);
         event.registerBlockEntityRenderer(MekanismTileEntityTypes.THERMAL_EVAPORATION_CONTROLLER.get(), RenderThermalEvaporationPlant::new);
         event.registerBlockEntityRenderer(MekanismTileEntityTypes.INDUSTRIAL_ALARM.get(), RenderIndustrialAlarm::new);
@@ -352,19 +343,14 @@ public class ClientRegistration {
         event.registerLayerDefinition(ModelJetpack.JETPACK_LAYER, ModelJetpack::createLayerDefinition);
         event.registerLayerDefinition(ModelArmoredJetpack.ARMORED_JETPACK_LAYER, ModelArmoredJetpack::createLayerDefinition);
         event.registerLayerDefinition(ModelAtomicDisassembler.DISASSEMBLER_LAYER, ModelAtomicDisassembler::createLayerDefinition);
-        event.registerLayerDefinition(ModelChemicalDissolutionChamber.DISSOLUTION_LAYER, ModelChemicalDissolutionChamber::createLayerDefinition);
         event.registerLayerDefinition(ModelEnergyCore.CORE_LAYER, ModelEnergyCore::createLayerDefinition);
-        event.registerLayerDefinition(ModelEnergyCube.CUBE_LAYER, ModelEnergyCube::createLayerDefinition);
         event.registerLayerDefinition(ModelFlamethrower.FLAMETHROWER_LAYER, ModelFlamethrower::createLayerDefinition);
-        event.registerLayerDefinition(ModelFluidTank.TANK_LAYER, ModelFluidTank::createLayerDefinition);
         event.registerLayerDefinition(ModelArmoredFreeRunners.ARMORED_FREE_RUNNER_LAYER, ModelArmoredFreeRunners::createLayerDefinition);
         event.registerLayerDefinition(ModelFreeRunners.FREE_RUNNER_LAYER, ModelFreeRunners::createLayerDefinition);
         event.registerLayerDefinition(ModelIndustrialAlarm.ALARM_LAYER, ModelIndustrialAlarm::createLayerDefinition);
         event.registerLayerDefinition(ModelQuantumEntangloporter.ENTANGLOPORTER_LAYER, ModelQuantumEntangloporter::createLayerDefinition);
         event.registerLayerDefinition(ModelScubaMask.MASK_LAYER, ModelScubaMask::createLayerDefinition);
         event.registerLayerDefinition(ModelScubaTank.TANK_LAYER, ModelScubaTank::createLayerDefinition);
-        event.registerLayerDefinition(ModelSeismicVibrator.VIBRATOR_LAYER, ModelSeismicVibrator::createLayerDefinition);
-        event.registerLayerDefinition(ModelSolarNeutronActivator.ACTIVATOR_LAYER, ModelSolarNeutronActivator::createLayerDefinition);
         event.registerLayerDefinition(ModelTransporterBox.BOX_LAYER, ModelTransporterBox::createLayerDefinition);
     }
 
@@ -373,10 +359,9 @@ public class ClientRegistration {
         //Robit Texture Atlas
         event.registerReloadListener(new RobitSpriteUploader(Minecraft.getInstance().getTextureManager()));
         //ISTERs
-        ClientRegistrationUtil.registerClientReloadListeners(event, RenderChemicalDissolutionChamberItem.RENDERER, RenderEnergyCubeItem.RENDERER,
-              RenderFluidTankItem.RENDERER, RenderQuantumEntangloporterItem.RENDERER, RenderSeismicVibratorItem.RENDERER,
-              RenderSolarNeutronActivatorItem.RENDERER, RenderJetpack.ARMORED_RENDERER, RenderAtomicDisassembler.RENDERER, RenderFlameThrower.RENDERER,
-              RenderFreeRunners.RENDERER, RenderFreeRunners.ARMORED_RENDERER, RenderJetpack.RENDERER, RenderScubaMask.RENDERER, RenderScubaTank.RENDERER);
+        ClientRegistrationUtil.registerClientReloadListeners(event, RenderEnergyCubeItem.RENDERER, RenderQuantumEntangloporterItem.RENDERER,
+              RenderJetpack.ARMORED_RENDERER, RenderAtomicDisassembler.RENDERER, RenderFlameThrower.RENDERER, RenderFreeRunners.RENDERER,
+              RenderFreeRunners.ARMORED_RENDERER, RenderJetpack.RENDERER, RenderScubaMask.RENDERER, RenderScubaTank.RENDERER);
         //Custom Armor
         ClientRegistrationUtil.registerClientReloadListeners(event, JetpackArmor.ARMORED_JETPACK, JetpackArmor.JETPACK, FreeRunnerArmor.ARMORED_FREE_RUNNERS,
               FreeRunnerArmor.FREE_RUNNERS, ScubaMaskArmor.SCUBA_MASK, ScubaTankArmor.SCUBA_TANK);
@@ -469,6 +454,7 @@ public class ClientRegistration {
     @SubscribeEvent
     public static void registerModelLoaders(RegisterGeometryLoaders event) {
         event.register("robit", RobitModel.Loader.INSTANCE);
+        event.register("energy_cube", EnergyCubeModelLoader.INSTANCE);
         event.register("transmitter", TransmitterLoader.INSTANCE);
     }
 
@@ -534,6 +520,16 @@ public class ClientRegistration {
                 ClientRegistrationUtil.registerBlockColorHandler(event, (state, world, pos, index) -> index == 1 ? tint : -1, entry.getValue());
             }
         }
+        ClientRegistrationUtil.registerBlockColorHandler(event, (state, world, pos, index) -> {
+                  if (index == 1) {
+                      EnergyCubeTier tier = Attribute.getTier(state.getBlock(), EnergyCubeTier.class);
+                      if (tier != null) {
+                          return MekanismRenderer.getColorARGB(tier.getBaseTier().getColor(), 1);
+                      }
+                  }
+                  return -1;
+              }, MekanismBlocks.BASIC_ENERGY_CUBE, MekanismBlocks.ADVANCED_ENERGY_CUBE, MekanismBlocks.ELITE_ENERGY_CUBE, MekanismBlocks.ULTIMATE_ENERGY_CUBE,
+              MekanismBlocks.CREATIVE_ENERGY_CUBE);
     }
 
     @SubscribeEvent
@@ -561,6 +557,13 @@ public class ClientRegistration {
             }
             return -1;
         }, MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS);
+        ClientRegistrationUtil.registerItemColorHandler(event, (stack, index) -> {
+                  if (index == 1 && stack.getItem() instanceof ItemBlockEnergyCube cube) {
+                      return MekanismRenderer.getColorARGB(cube.getTier().getBaseTier().getColor(), 1);
+                  }
+                  return -1;
+              }, MekanismBlocks.BASIC_ENERGY_CUBE, MekanismBlocks.ADVANCED_ENERGY_CUBE, MekanismBlocks.ELITE_ENERGY_CUBE, MekanismBlocks.ULTIMATE_ENERGY_CUBE,
+              MekanismBlocks.CREATIVE_ENERGY_CUBE);
 
         for (Map.Entry<IResource, BlockRegistryObject<?, ?>> entry : MekanismBlocks.PROCESSED_RESOURCE_BLOCKS.entrySet()) {
             if (entry.getKey() instanceof PrimaryResource primaryResource) {
