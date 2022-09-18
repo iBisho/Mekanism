@@ -331,7 +331,7 @@ public final class MekanismUtils {
      */
     public static FloatingLong getMaxEnergy(IUpgradeTile tile, FloatingLong def) {
         if (tile.supportsUpgrades()) {
-            return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 2.5 * fractionUpgrades(tile, Upgrade.ENERGY)));
+            return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 1.75 * fractionUpgrades(tile, Upgrade.ENERGY)));
         }
         return def;
     }
@@ -350,7 +350,7 @@ public final class MekanismUtils {
             Map<Upgrade, Integer> upgrades = Upgrade.buildMap(ItemDataUtils.getCompound(stack, NBTConstants.COMPONENT_UPGRADE));
             numUpgrades = upgrades.getOrDefault(Upgrade.ENERGY, 0);
         }
-        return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 1.2 * (numUpgrades / Upgrade.ENERGY.getMax())));
+        return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 1.75 * (numUpgrades / Upgrade.ENERGY.getMax())));
     }
 
     /**
