@@ -61,8 +61,8 @@ public class FissionReactorMultiblockData extends MultiblockData implements IVal
     private static final long HEATED_COOLANT_PER_VOLUME = 1_000_000;
     private static final long FUEL_PER_ASSEMBLY = 8_000;
 
-    public static final double MIN_DAMAGE_TEMPERATURE = 36_800;
-    public static final double MAX_DAMAGE_TEMPERATURE = 85_750;
+    public static final double MIN_DAMAGE_TEMPERATURE = 86_800;
+    public static final double MAX_DAMAGE_TEMPERATURE = 165_750;
     public static final double MAX_DAMAGE = 100;
 
     private static final double EXPLOSION_CHANCE = 1D / (512_000);
