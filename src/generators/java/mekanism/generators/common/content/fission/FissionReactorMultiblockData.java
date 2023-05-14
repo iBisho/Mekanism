@@ -58,8 +58,8 @@ public class FissionReactorMultiblockData extends MultiblockData implements IVal
 
     private static final double waterConductivity = 0.5;
 
-    public static final double MIN_DAMAGE_TEMPERATURE = 1_200;
-    public static final double MAX_DAMAGE_TEMPERATURE = 1_800;
+    public static final double MIN_DAMAGE_TEMPERATURE = 120_000;
+    public static final double MAX_DAMAGE_TEMPERATURE = 240_000;
     public static final double MAX_DAMAGE = 100;
 
     private static final double EXPLOSION_CHANCE = 1D / 512_000;

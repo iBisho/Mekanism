@@ -79,7 +79,7 @@ public class TileEntityRotaryCondensentrator extends TileEntityRecipeMachine<Rot
           NOT_ENOUGH_SPACE_FLUID_OUTPUT_ERROR,
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
-    private static final int CAPACITY = 10_000;
+    private static final int CAPACITY = 100_000;
 
     @WrappingComputerMethod(wrapper = ComputerChemicalTankWrapper.class, methodNames = {"getGas", "getGasCapacity", "getGasNeeded", "getGasFilledPercentage"})
     public IGasTank gasTank;
@@ -280,7 +280,7 @@ public class TileEntityRotaryCondensentrator extends TileEntityRecipeMachine<Rot
     public void recalculateUpgrades(Upgrade upgrade) {
         super.recalculateUpgrades(upgrade);
         if (upgrade == Upgrade.SPEED) {
-            baselineMaxOperations = (int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED));
+            baselineMaxOperations = (int) Math.pow(3, upgradeComponent.getUpgrades(Upgrade.SPEED));
         }
     }
 

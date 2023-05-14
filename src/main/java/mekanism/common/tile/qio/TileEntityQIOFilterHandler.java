@@ -55,13 +55,13 @@ public class TileEntityQIOFilterHandler extends TileEntityQIOComponent implement
     }
 
     protected int getMaxTransitCount() {
-        // 64 to 320 items
-        return 64 + 32 * upgradeComponent.getUpgrades(Upgrade.SPEED);
+        // 64 to 576 items
+        return 64 + (int) Math.round(64 * upgradeComponent.getUpgrades(Upgrade.SPEED));
     }
 
     protected int getMaxTransitTypes() {
-        // 1 to 5 types
-        return Math.round(1F + upgradeComponent.getUpgrades(Upgrade.SPEED) / 2F);
+        // 2 to 14 types
+        return Math.round(2F + 1.5F * upgradeComponent.getUpgrades(Upgrade.SPEED));
     }
 
     //Methods relating to IComputerTile

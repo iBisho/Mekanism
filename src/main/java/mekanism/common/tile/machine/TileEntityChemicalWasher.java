@@ -69,8 +69,8 @@ public class TileEntityChemicalWasher extends TileEntityRecipeMachine<FluidSlurr
           RecipeError.NOT_ENOUGH_OUTPUT_SPACE,
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
-    private static final long MAX_SLURRY = 10_000;
-    private static final int MAX_FLUID = 10_000;
+    private static final long MAX_SLURRY = 100_000;
+    private static final int MAX_FLUID = 100_000;
 
     @WrappingComputerMethod(wrapper = ComputerFluidTankWrapper.class, methodNames = {"getFluid", "getFluidCapacity", "getFluidNeeded", "getFluidFilledPercentage"})
     public BasicFluidTank fluidTank;

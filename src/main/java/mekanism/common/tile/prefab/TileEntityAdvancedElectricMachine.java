@@ -65,7 +65,7 @@ public abstract class TileEntityAdvancedElectricMachine extends TileEntityProgre
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
     public static final int BASE_TICKS_REQUIRED = 200;
-    public static final long MAX_GAS = 210;
+    public static final long MAX_GAS = 3_200;
 
     private final ChemicalUsageMultiplier gasUsageMultiplier;
     private double gasPerTickMeanMultiplier = 1;

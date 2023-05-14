@@ -91,7 +91,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityRecipeMachine<Ele
     /**
      * The maximum amount of gas this block can store.
      */
-    private static final long MAX_GAS = 2_400;
+    private static final long MAX_GAS = 40_000;
     private static final BiFunction<FloatingLong, TileEntityElectrolyticSeparator, FloatingLong> BASE_ENERGY_CALCULATOR =
           (base, tile) -> base.multiply(tile.getRecipeEnergyMultiplier());
 
@@ -182,7 +182,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityRecipeMachine<Ele
     @Override
     protected IFluidTankHolder getInitialFluidTanks(IContentsListener listener, IContentsListener recipeCacheListener) {
         FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this::getDirection, this::getConfig);
-        builder.addTank(fluidTank = BasicFluidTank.input(24_000, this::containsRecipe, recipeCacheListener));
+        builder.addTank(fluidTank = BasicFluidTank.input(100_000, this::containsRecipe, recipeCacheListener));
         return builder.build();
     }
 
@@ -241,7 +241,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityRecipeMachine<Ele
     private void handleTank(IGasTank tank, GasMode mode) {
         if (!tank.isEmpty()) {
             if (mode == GasMode.DUMPING) {
-                tank.shrinkStack(8 * (long) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED)), Action.EXECUTE);
+                tank.shrinkStack(8 * (long) Math.pow(3, upgradeComponent.getUpgrades(Upgrade.SPEED)), Action.EXECUTE);
             } else if (mode == GasMode.DUMPING_EXCESS) {
                 long target = getDumpingExcessTarget(tank);
                 long stored = tank.getStored();
@@ -309,7 +309,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityRecipeMachine<Ele
     public void recalculateUpgrades(Upgrade upgrade) {
         super.recalculateUpgrades(upgrade);
         if (upgrade == Upgrade.SPEED) {
-            baselineMaxOperations = (int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED));
+            baselineMaxOperations = (int) Math.pow(3, upgradeComponent.getUpgrades(Upgrade.SPEED));
         }
     }
 

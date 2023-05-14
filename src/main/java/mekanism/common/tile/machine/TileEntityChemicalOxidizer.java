@@ -56,7 +56,7 @@ public class TileEntityChemicalOxidizer extends TileEntityProgressMachine<ItemSt
           RecipeError.NOT_ENOUGH_OUTPUT_SPACE,
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
-    private static final long MAX_GAS = 10_000;
+    private static final long MAX_GAS = 100_000;
 
     @WrappingComputerMethod(wrapper = ComputerChemicalTankWrapper.class, methodNames = {"getOutput", "getOutputCapacity", "getOutputNeeded", "getOutputFilledPercentage"})
     public IGasTank gasTank;

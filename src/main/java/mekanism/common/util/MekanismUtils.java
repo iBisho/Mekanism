@@ -302,7 +302,7 @@ public final class MekanismUtils {
      */
     public static FloatingLong getEnergyPerTick(IUpgradeTile tile, FloatingLong def) {
         if (tile.supportsUpgrades()) {
-            return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 2 * fractionUpgrades(tile, Upgrade.SPEED) - fractionUpgrades(tile, Upgrade.ENERGY)));
+            return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 2 * fractionUpgrades(tile, Upgrade.SPEED) - 1.1 * fractionUpgrades(tile, Upgrade.ENERGY)));
         }
         return def;
     }
@@ -317,7 +317,7 @@ public final class MekanismUtils {
     public static double getGasPerTickMeanMultiplier(IUpgradeTile tile) {
         if (tile.supportsUpgrades()) {
             if (tile.supportsUpgrade(Upgrade.GAS)) {
-                return Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 2 * fractionUpgrades(tile, Upgrade.SPEED) - fractionUpgrades(tile, Upgrade.GAS));
+                return Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 2 * fractionUpgrades(tile, Upgrade.SPEED) - 1.125 * fractionUpgrades(tile, Upgrade.GAS));
             }
             return Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), fractionUpgrades(tile, Upgrade.SPEED));
         }
@@ -334,7 +334,7 @@ public final class MekanismUtils {
      */
     public static FloatingLong getMaxEnergy(IUpgradeTile tile, FloatingLong def) {
         if (tile.supportsUpgrades()) {
-            return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), fractionUpgrades(tile, Upgrade.ENERGY)));
+            return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 1.5 * fractionUpgrades(tile, Upgrade.ENERGY)));
         }
         return def;
     }
@@ -353,7 +353,7 @@ public final class MekanismUtils {
             Map<Upgrade, Integer> upgrades = Upgrade.buildMap(ItemDataUtils.getCompound(stack, NBTConstants.COMPONENT_UPGRADE));
             numUpgrades = upgrades.getOrDefault(Upgrade.ENERGY, 0);
         }
-        return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), numUpgrades / Upgrade.ENERGY.getMax()));
+        return def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), 1.5 * (numUpgrades / Upgrade.ENERGY.getMax())));
     }
 
     /**

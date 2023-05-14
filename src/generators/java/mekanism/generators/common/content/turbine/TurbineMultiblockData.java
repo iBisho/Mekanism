@@ -125,7 +125,8 @@ public class TurbineMultiblockData extends MultiblockData {
         FloatingLong energyNeeded = energyContainer.getNeeded();
         if (stored > 0 && !energyNeeded.isZero()) {
             FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
-                  .multiply(Math.min(blades, coils * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
+                  .multiply(Math.min(blades, coils * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()))
+									.multipliy(2.25);
             if (energyMultiplier.isZero()) {
                 clientFlow = 0;
             } else {
@@ -235,14 +236,16 @@ public class TurbineMultiblockData extends MultiblockData {
     @ComputerMethod
     public FloatingLong getProductionRate() {
         FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
-              .multiply(Math.min(blades, coils * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
+              .multiply(Math.min(blades, coils * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()))
+							.multipliy(2.5);
         return energyMultiplier.multiply(clientFlow);
     }
 
     @ComputerMethod
     public FloatingLong getMaxProduction() {
         FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
-              .multiply(Math.min(blades, coils * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
+              .multiply(Math.min(blades, coils * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()))
+							.multipliy(2.5);
         double rate = lowerVolume * (getDispersers() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
         rate = Math.min(rate, vents * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
         return energyMultiplier.multiply(rate);

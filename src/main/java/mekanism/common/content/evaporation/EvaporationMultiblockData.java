@@ -62,7 +62,7 @@ public class EvaporationMultiblockData extends MultiblockData implements IValveH
           RecipeError.NOT_ENOUGH_OUTPUT_SPACE,
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
-    public static final int MAX_HEIGHT = 18;
+    public static final int MAX_HEIGHT = 32;
     public static final double MAX_MULTIPLIER_TEMP = 3_000;
 
     @ContainerSync
