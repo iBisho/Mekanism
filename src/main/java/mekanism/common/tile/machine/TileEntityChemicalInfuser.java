@@ -64,7 +64,7 @@ public class TileEntityChemicalInfuser extends TileEntityRecipeMachine<ChemicalI
           RecipeError.NOT_ENOUGH_OUTPUT_SPACE,
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
-    public static final long MAX_GAS = 10_000;
+    public static final long MAX_GAS = 60_000;
 
     @WrappingComputerMethod(wrapper = ComputerChemicalTankWrapper.class, methodNames = {"getLeftInput", "getLeftInputCapacity", "getLeftInputNeeded",
                                                                                         "getLeftInputFilledPercentage"})
@@ -212,7 +212,7 @@ public class TileEntityChemicalInfuser extends TileEntityRecipeMachine<ChemicalI
     public void recalculateUpgrades(Upgrade upgrade) {
         super.recalculateUpgrades(upgrade);
         if (upgrade == Upgrade.SPEED) {
-            baselineMaxOperations = (int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED));
+            baselineMaxOperations = (int) Math.pow(3, upgradeComponent.getUpgrades(Upgrade.SPEED));
         }
     }
 

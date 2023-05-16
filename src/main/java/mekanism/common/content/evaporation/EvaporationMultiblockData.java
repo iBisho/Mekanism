@@ -59,10 +59,10 @@ public class EvaporationMultiblockData extends MultiblockData implements IValveH
           RecipeError.NOT_ENOUGH_OUTPUT_SPACE,
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
-    private static final int MAX_OUTPUT = 10_000;
-    public static final int MAX_HEIGHT = 18;
+    private static final int MAX_OUTPUT = 40_000;
+    public static final int MAX_HEIGHT = 32;
     public static final double MAX_MULTIPLIER_TEMP = 3_000;
-    public static final int FLUID_PER_TANK = 64_000;
+    public static final int FLUID_PER_TANK = 128_000;
 
     @ContainerSync
     @WrappingComputerMethod(wrapper = ComputerFluidTankWrapper.class, methodNames = {"getInput", "getInputCapacity", "getInputNeeded", "getInputFilledPercentage"})

@@ -102,6 +102,6 @@ public class ModuleElectrolyticBreathingUnit implements ICustomModule<ModuleElec
     }
 
     private int getMaxRate(IModule<ModuleElectrolyticBreathingUnit> module) {
-        return (int) Math.pow(2, module.getInstalledCount());
+        return (int) Math.pow(3, module.getInstalledCount());
     }
 }

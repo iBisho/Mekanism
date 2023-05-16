@@ -14,13 +14,13 @@ public class ModuleEnergyUnit implements ICustomModule<ModuleEnergyUnit> {
     public FloatingLong getEnergyCapacity(IModule<ModuleEnergyUnit> module) {
         FloatingLong base = module.getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.gear.mekaSuitBaseEnergyCapacity.get()
                                                                                          : MekanismConfig.gear.mekaToolBaseEnergyCapacity.get();
-        return base.multiply(Math.pow(2, module.getInstalledCount()));
+        return base.multiply(Math.pow(3, module.getInstalledCount()));
     }
 
     public FloatingLong getChargeRate(IModule<ModuleEnergyUnit> module) {
         FloatingLong base = module.getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.gear.mekaSuitBaseChargeRate.get()
                                                                                          : MekanismConfig.gear.mekaToolBaseChargeRate.get();
-        return base.multiply(Math.pow(2, module.getInstalledCount()));
+        return base.multiply(Math.pow(3, module.getInstalledCount()));
     }
 
     @Override
